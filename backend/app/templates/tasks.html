@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Task List</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <section class="card">
+            <h2>Create Task</h2>
+            <form action="/tasks" method="post">
+                <label for="title">Title</label>
+                <input id="title" name="title" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                </select>
+
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Tasks</h2>
+            {% if tasks %}
+            <ul class="task-list">
+                {% for task in tasks %}
+                <li class="task-item {{ 'completed' if task.completed else '' }}">
+                    <div class="task-details">
+                        <strong>{{ task.title }}</strong>
+                        <p>{{ task.description }}</p>
+                        <span class="priority {{ task.priority }}">{{ task.priority }}</span>
+                        <span class="status">{{ 'Completed' if task.completed else 'Active' }}</span>
+                    </div>
+                    <div class="task-actions">
+                        <form action="/tasks/{{ task.id }}/complete" method="post">
+                            <button type="submit">{{ 'Reopen' if task.completed else 'Complete' }}</button>
+                        </form>
+                        <form action="/tasks/{{ task.id }}/edit" method="post">
+                            <input type="hidden" name="title" value="{{ task.title }}">
+                            <input type="hidden" name="description" value="{{ task.description }}">
+                            <input type="hidden" name="priority" value="{{ task.priority }}">
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="/tasks/{{ task.id }}/delete" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No tasks yet.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
