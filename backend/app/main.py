@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request, Form
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -43,6 +43,18 @@ def complete_task(task_id: int):
     return JSONResponse(status_code=200, content=task)
 
 
+@app.get("/tasks/{task_id}/edit")
+def show_edit_task(request: Request, task_id: int):
+    task = TaskService.get_task(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return templates.TemplateResponse(
+        request,
+        "edit_task.html",
+        {"task": task, "error": None},
+    )
+
+
 @app.post("/tasks/{task_id}/edit")
 def edit_task(
     task_id: int,
@@ -51,8 +63,11 @@ def edit_task(
     priority: str = Form("medium"),
 ):
     payload = TaskCreate(title=title, description=description, priority=priority)
-    task = TaskService.update_task(task_id, payload.title, payload.description, payload.normalized_priority)
-    return JSONResponse(status_code=200, content=task)
+    try:
+        TaskService.update_task(task_id, payload.title, payload.description, payload.normalized_priority)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return RedirectResponse(url="/", status_code=303)
 
 
 @app.post("/tasks/{task_id}/delete")

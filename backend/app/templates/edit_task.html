@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <main class="container">
+        <h1>Edit Task</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <section class="card">
+            <form action="/tasks/{{ task.id }}/edit" method="post">
+                <label for="title">Title</label>
+                <input id="title" name="title" value="{{ task.title }}" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" name="description">{{ task.description }}</textarea>
+
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority">
+                    <option value="high" {{ 'selected' if task.priority == 'high' else '' }}>High</option>
+                    <option value="medium" {{ 'selected' if task.priority == 'medium' else '' }}>Medium</option>
+                    <option value="low" {{ 'selected' if task.priority == 'low' else '' }}>Low</option>
+                </select>
+
+                <button type="submit">Save Changes</button>
+            </form>
+            <p><a href="/">Back to tasks</a></p>
+        </section>
+    </main>
+</body>
+</html>

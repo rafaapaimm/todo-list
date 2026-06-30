@@ -77,6 +77,15 @@ button {
     gap: 0.5rem;
 }
 
+.button-link {
+    display: inline-block;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+}
+
 .error {
     color: #b91c1c;
 }

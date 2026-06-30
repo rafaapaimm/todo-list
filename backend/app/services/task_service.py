@@ -45,6 +45,14 @@ class TaskService:
             return updated_dict
 
     @staticmethod
+    def get_task(task_id: int) -> dict | None:
+        with get_connection() as conn:
+            row = conn.execute("SELECT * FROM tasks WHERE id = ?", (task_id,)).fetchone()
+            if not row:
+                return None
+            return dict(row)
+
+    @staticmethod
     def delete_task(task_id: int) -> None:
         with get_connection() as conn:
             conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))

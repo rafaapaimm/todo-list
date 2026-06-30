@@ -32,3 +32,28 @@ def test_toggle_complete_and_delete_task():
 
     delete_response = client.post(f"/tasks/{task_id}/delete")
     assert delete_response.status_code == 200
+
+
+def test_edit_form_renders_and_updates_task():
+    client = TestClient(app)
+    create_response = client.post(
+        "/tasks",
+        data={"title": "Comprar pão", "description": "Na padaria", "priority": "medium"},
+    )
+    assert create_response.status_code == 200
+
+    task_id = create_response.json()["id"]
+    edit_page = client.get(f"/tasks/{task_id}/edit")
+    assert edit_page.status_code == 200
+    assert "Edit Task" in edit_page.text
+    assert "Comprar pão" in edit_page.text
+
+    update_response = client.post(
+        f"/tasks/{task_id}/edit",
+        data={"title": "Comprar pão integral", "description": "Na padaria", "priority": "low"},
+        follow_redirects=False,
+    )
+    assert update_response.status_code == 303
+
+    list_response = client.get("/")
+    assert "Comprar pão integral" in list_response.text
