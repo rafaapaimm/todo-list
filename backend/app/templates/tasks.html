@@ -49,12 +49,7 @@
                         <form action="/tasks/{{ task.id }}/complete" method="post">
                             <button type="submit">{{ 'Reopen' if task.completed else 'Complete' }}</button>
                         </form>
-                        <form action="/tasks/{{ task.id }}/edit" method="post">
-                            <input type="hidden" name="title" value="{{ task.title }}">
-                            <input type="hidden" name="description" value="{{ task.description }}">
-                            <input type="hidden" name="priority" value="{{ task.priority }}">
-                            <button type="submit">Edit</button>
-                        </form>
+                        <a href="/tasks/{{ task.id }}/edit" class="button-link">Edit</a>
                         <form action="/tasks/{{ task.id }}/delete" method="post">
                             <button type="submit">Delete</button>
                         </form>
